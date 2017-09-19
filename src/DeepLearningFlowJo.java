@@ -44,7 +44,7 @@ public class DeepLearningFlowJo implements PopulationPluginInterface
 	private static File gScriptFile = null;
 	
 	//default min epochs
-	private int numEpochs = 5;
+	private int numEpochs = 1;
 	
 	//start off with an empty state
 	private pluginState state = pluginState.empty; 
@@ -62,7 +62,6 @@ public class DeepLearningFlowJo implements PopulationPluginInterface
 		//obtain the fcmlQueryElement for the ImportCSV method
 		queryElement = fcmlQueryElement;
         
-        ///////////////////////////////////////
         List<Object> guiObjects = new ArrayList<Object>();
 		FJLabel explainText = new FJLabel();
 		guiObjects.add(explainText);
@@ -73,8 +72,8 @@ public class DeepLearningFlowJo implements PopulationPluginInterface
 		text += "Enter the number of Epochs";
 		text += "</body></html>";
 		explainText.setText(text);
-		// entry
-		FJLabel label = new FJLabel("Number of Epochs (5 - 600) ");
+		// Epoch entry
+		FJLabel label = new FJLabel("Number of Epochs (1 - 600) ");
 		String tip = "A higher number of Epochs will result in more accurately trained data but takes longer.";
 		label.setToolTipText(tip);
 		RangedIntegerTextField epochInputField = new RangedIntegerTextField(1, 600);
@@ -83,22 +82,15 @@ public class DeepLearningFlowJo implements PopulationPluginInterface
 		GuiFactory.setSizes(epochInputField, new Dimension(50, 25));
 		Box box = SwingUtil.hbox(Box.createHorizontalGlue(), label, epochInputField, Box.createHorizontalGlue());
 		guiObjects.add(box);
-        ///////////////////////////////////////
-        
-		
-		///////////////////////////////////////
+
 		SElement algorithmElement = getElement();
         // pass the XML element to the cluster prompter
-        //ClusterPrompter prompter = new ClusterPrompter(algorithmElement);
 		ParameterOptionHolder prompter = new ParameterOptionHolder(algorithmElement);
-        //if (!prompter.promptForOptions(null, parameterNames, true))
         if (!prompter.promptForOptions(algorithmElement, parameterNames))
             return false;
         algorithmElement = prompter.getElement();
         setElement(algorithmElement);
-        ///////////////////////////////////////
-        
-		///////////////////////////////////////
+
 		int option = JOptionPane.showConfirmDialog(null, guiObjects.toArray(), "Deep_Learning_Plugin",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null);
 		
@@ -124,7 +116,6 @@ public class DeepLearningFlowJo implements PopulationPluginInterface
 		} 
 		else
 			return false;
-		/////////////////////////////////////////////
 	}
 	
 	@Override
@@ -170,7 +161,7 @@ public class DeepLearningFlowJo implements PopulationPluginInterface
 	* Function: getScriptFile
 	* Purpose: Unpacks the python script from the jar file saves
 	* 	it to the local files system in the outputFolder
-	* Arguments: Path to the output folder defined by SeqGeq
+	* Arguments: Path to the output folder defined by FlowJo
 	* Result: Returns the file object of the python script
 	****************************************************************/
 	private File getScriptFile(File absolutePath) {
@@ -277,8 +268,7 @@ public class DeepLearningFlowJo implements PopulationPluginInterface
 		else if (state == pluginState.learned)
 		{
 			targetPath = sampleFile.getAbsolutePath();
-			//the ready state prevents users from continuing to use the plugin outside 
-			// of it's intended use
+			//the ready state prevents users from continuing to use the plugin outside it's intended use
 			state = pluginState.ready;
 			outputPath = outputFolder.getAbsolutePath();
 			
